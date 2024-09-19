@@ -115,10 +115,32 @@
 // Initialize the Leaflet map
 var map = L.map('map').setView([42.4189, -71.1422], 13); // Default location and zoom
 
-// Add OpenStreetMap tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// Define the different map layers
+var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+});
+
+var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: '&copy; Google'
+});
+
+// Add MassMapper WMS layer
+var massMapperWMS = L.tileLayer.wms("https://gis-prod.digital.mass.gov/geoserver/wms", {
+    layers: 'massgis:GISDATA.IMG_SHADEDRELIEF_LIDAR',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'MassGIS'
+});
+
+// Add the new Shaded Relief ArcGIS layer
+var shadedReliefLayer = L.tileLayer('https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/LiDAR_ShadedRelief/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Shaded Relief &copy; <a href="https://www.arcgis.com/home/item.html?id=5fb17dfad618421f8d2513a805a2a7b5">ArcGIS</a>'
+});
+	
+// Add the default layer (OpenStreetMap) to the map
+osmLayer.addTo(map);
+
 
 // List of GPS coordinates for each scene (example with 4 scenes, add more as needed)
 var markers = [
@@ -153,6 +175,15 @@ markers.forEach(function(marker) {
     });
 });
 
+// Define the base layers (to be toggled)
+var baseMaps = {
+    "OpenStreetMap": osmLayer,
+    "Satellite View": satelliteLayer,
+"Hillshade": shadedReliefLayer
+};
+
+// Add the layer control to the map (for toggling between layers)
+L.control.layers(baseMaps).addTo(map);
 
 // Function to switch scenes (assuming a function like this already exists)
 function switchScene(sceneId) {
