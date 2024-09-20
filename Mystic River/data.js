@@ -2,7 +2,7 @@ var APP_DATA = {
   "scenes": [
     {
       "id": "0-frames_0038",
-      "name": "frames_0038",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -36,11 +36,21 @@ var APP_DATA = {
           "target": "1-frames_0039"
         }
       ],
-      "infoHotspots": []
+      "infoHotspots": [{
+          "yaw": 4.82,
+          "pitch": -.14,
+          "title": "Outfall",
+          "text": "Concrete Pipe, 24 in. diameter"
+        }, {
+          "yaw": 2.82,
+          "pitch": -.14,
+          "title": "Site Visit Info",
+          "text": "Date: 3/14/2024;                     Discharge: 350 CFS                   Measured at USGS Gage 01103010"
+        }]
     },
     {
       "id": "1-frames_0039",
-      "name": "frames_0039",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -84,7 +94,7 @@ var APP_DATA = {
     },
     {
       "id": "2-frames_0040",
-      "name": "frames_0040",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -128,7 +138,7 @@ var APP_DATA = {
     },
     {
       "id": "3-frames_0041",
-      "name": "frames_0041",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -173,13 +183,13 @@ var APP_DATA = {
           "yaw": 2.8802238861851777,
           "pitch": -0.26847862719573,
           "title": "Harvard Ave. Bridge",
-          "text": "Text"
+          "text": "Span: 66 ft."
         }
       ]
     },
     {
       "id": "4-frames_0042",
-      "name": "frames_0042",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -223,7 +233,7 @@ var APP_DATA = {
     },
     {
       "id": "5-frames_0043",
-      "name": "frames_0043",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -267,7 +277,7 @@ var APP_DATA = {
     },
     {
       "id": "6-frames_0044",
-      "name": "frames_0044",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -311,7 +321,7 @@ var APP_DATA = {
     },
     {
       "id": "7-frames_0045",
-      "name": "frames_0045",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -355,7 +365,7 @@ var APP_DATA = {
     },
     {
       "id": "8-frames_0046",
-      "name": "frames_0046",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -399,7 +409,7 @@ var APP_DATA = {
     },
     {
       "id": "9-frames_0047",
-      "name": "frames_0047",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,
@@ -443,7 +453,7 @@ var APP_DATA = {
     },
     {
       "id": "10-frames_0048",
-      "name": "frames_0048",
+      "name": "",
       "levels": [
         {
           "tileSize": 256,

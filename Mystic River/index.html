@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
 </head>
 <body class="multiple-scenes ">
 
@@ -145,17 +144,17 @@ osmLayer.addTo(map);
 // List of GPS coordinates for each scene (example with 4 scenes, add more as needed)
 var markers = [
     
-    { lat: 42.41567, lon: -71.13886, title: 'Frame 38', sceneId: '37-frames_0038' },
-    { lat: 42.41564, lon: -71.13877, title: 'Frame 39', sceneId: '38-frames_0039' },
-    { lat: 42.41561, lon: -71.13869, title: 'Frame 40', sceneId: '39-frames_0040' },
-    { lat: 42.41557, lon: -71.13857, title: 'Frame 41', sceneId: '40-frames_0041' },
-    { lat: 42.41555, lon: -71.13851, title: 'Frame 42', sceneId: '41-frames_0042' },
-    { lat: 42.41551, lon: -71.13838, title: 'Frame 43', sceneId: '42-frames_0043' },
-    { lat: 42.41547, lon: -71.13825, title: 'Frame 44', sceneId: '43-frames_0044' },
-    { lat: 42.41541, lon: -71.13806, title: 'Frame 45', sceneId: '44-frames_0045' },
-    { lat: 42.41535, lon: -71.13790, title: 'Frame 46', sceneId: '45-frames_0046' },
-    { lat: 42.41532, lon: -71.13776, title: 'Frame 47', sceneId: '46-frames_0047' },
-    { lat: 42.41528, lon: -71.13756, title: 'Frame 48', sceneId: '47-frames_0048' }
+    { lat: 42.41567, lon: -71.13886, title: '1 - Dugger Park', sceneId: '37-frames_0038' },
+    { lat: 42.41564, lon: -71.13877, title: '2', sceneId: '38-frames_0039' },
+    { lat: 42.41561, lon: -71.13869, title: '3', sceneId: '39-frames_0040' },
+    { lat: 42.41557, lon: -71.13857, title: '4', sceneId: '40-frames_0041' },
+    { lat: 42.41555, lon: -71.13851, title: '5', sceneId: '41-frames_0042' },
+    { lat: 42.41551, lon: -71.13838, title: '6 - Harvard Ave. Bridge', sceneId: '42-frames_0043' },
+    { lat: 42.41547, lon: -71.13825, title: '7', sceneId: '43-frames_0044' },
+    { lat: 42.41541, lon: -71.13806, title: '8', sceneId: '44-frames_0045' },
+    { lat: 42.41535, lon: -71.13790, title: '9', sceneId: '45-frames_0046' },
+    { lat: 42.41532, lon: -71.13776, title: '10', sceneId: '46-frames_0047' },
+    { lat: 42.41528, lon: -71.13756, title: '11', sceneId: '47-frames_0048' }
 	
 ];
 
@@ -165,7 +164,7 @@ markers.forEach(function(marker) {
     var popupContent = "<b>" + marker.title + "</b><br><a href='#' onclick=\"switchScene('" + marker.sceneId + "')\">View Panorama</a>";
     
     // Create a draggable marker
-    var mapMarker = L.marker([marker.lat, marker.lon], {draggable: true}).addTo(map).bindPopup(popupContent);
+    var mapMarker = L.marker([marker.lat, marker.lon], {draggable: false}).addTo(map).bindPopup(popupContent);
     
     // Event listener to capture the new position after dragging
     mapMarker.on('dragend', function(e) {
