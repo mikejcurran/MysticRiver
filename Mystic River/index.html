@@ -9,8 +9,66 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Add your custom styling -->
+<style>
+  #dischargeDataLink {
+      position: absolute;
+      bottom: 10px;  /* Adjust to place below your map */
+      right: 10px;   /* Adjust the right side position */
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: black;
+      font-size: 14px;
+      z-index: 1001;  /* Ensure it appears above other elements */
+  }
+  #dischargeDataLink:hover {
+      text-decoration: underline;
+  }
+  
+  #welcomeBox {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 300px;
+  background-color: rgba(255, 255, 255, 0.8);  /* White background with slight transparency */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);    /* Subtle shadow for a pop-out effect */
+  font-family: Arial, sans-serif;
+  z-index: 1001;  /* Ensure it's above other elements */
+}
+
+#welcomeBox h2 {
+  text-align: center;   /* Center the "Welcome!" title */
+  margin-top: 0 0 5px 0;
+  color: #2E3B4E
+}
+
+#welcomeBox p {
+  text-align: left;     /* Left-align the rest of the text */
+  margin: 0 0 10px 0;   /* Adjust margins to space out paragraphs */
+  font-size: 14px;      /* Optional: adjust font size for readability */
+  color: #2E3B4E
+}
+</style>
+
+
 </head>
 <body class="multiple-scenes ">
+
+<!-- Link to USGS Real-time discharge data -->
+<a id="dischargeDataLink" href="https://waterdata.usgs.gov/monitoring-location/01103050/#parameterCode=00065&period=P7D&showMedian=false" target="_blank">
+    Real-time discharge data
+</a>
+
+<div id="welcomeBox">
+  <h2>Welcome!</h2>
+  <p>Use your mouse to click and drag around the scene, and click the arrows or the scene list on the left to navigate upstream or downstream.</p>
+  <p>To toggle layers in the map, use the icon in the top right. If you'd like to see real-time water data for the Mystic River, use the link in the bottom right of the page.</p>
+  <p>Be sure to click on the information icons for descriptions of important features.</p>
+</div>
 
 <div id="pano"></div>
 
@@ -64,6 +122,35 @@
   </ul>
 </div>
 
+
+<script>
+// Function to show or hide the welcome box based on the current scene
+function toggleWelcomeBox(currentSceneId) {
+  var welcomeBox = document.getElementById('welcomeBox');
+  
+  // Check if the current scene is "1 - Dugger Park"
+  if (currentSceneId === '0-frames_0038') {  // Replace with the data-id of your scene
+    welcomeBox.style.display = 'block';  // Show the welcome box
+  } else {
+    welcomeBox.style.display = 'none';   // Hide the welcome box
+  }
+}
+
+// Add event listener to all scene links
+var sceneLinks = document.querySelectorAll('.scene');
+sceneLinks.forEach(function(sceneLink) {
+  sceneLink.addEventListener('click', function() {
+    var sceneId = this.getAttribute('data-id');
+    toggleWelcomeBox(sceneId);  // Call the function with the clicked scene's data-id
+  });
+});
+
+// Ensure the welcome box is visible on page load for the default scene
+document.addEventListener("DOMContentLoaded", function() {
+  toggleWelcomeBox('0-frames_0038');  // Call the function to show the welcome box for the initial scene
+});
+</script>
+
 <div id="titleBar">
   <h1 class="sceneName"></h1>
 </div>
@@ -110,9 +197,20 @@
 <script src="index.js"></script>
 <div id="map" style="width: 400px; height: 300px; position: absolute; top: 60px; right: 10px; z-index: 1000;"></div>
 
+
 <script>
-// Initialize the Leaflet map
-var map = L.map('map').setView([42.4189, -71.1422], 13); // Default location and zoom
+
+
+// MassGIS WMS layers setup
+var massGISWMSUrl = "https://gis-prod.digital.mass.gov/geoserver/wms";
+
+// Add MassMapper WMS layer
+var massMapperWMS = L.tileLayer.wms("https://gis-prod.digital.mass.gov/geoserver/wms", {
+    layers: 'massgis:GISDATA.IMG_SHADEDRELIEF_LIDAR',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'MassGIS'
+});
 
 // Define the different map layers
 var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -124,9 +222,18 @@ var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z
     attribution: '&copy; Google'
 });
 
-// Add MassMapper WMS layer
-var massMapperWMS = L.tileLayer.wms("https://gis-prod.digital.mass.gov/geoserver/wms", {
-    layers: 'massgis:GISDATA.IMG_SHADEDRELIEF_LIDAR',
+
+// Add the DF__MIGRATORY_HABITAT_ARC layer
+var smeltSpawningHabitat = L.tileLayer.wms("https://gis-prod.digital.mass.gov/geoserver/wms", {
+    layers: 'massgis:GISDATA.DF_MIGRATORY_HABITAT_ARC',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'MassGIS'
+});
+
+// Add the Dams layer
+var Dams = L.tileLayer.wms("https://gis-prod.digital.mass.gov/geoserver/wms", {
+    layers: 'massgis:GISDATA.DAMS_PT',
     format: 'image/png',
     transparent: true,
     attribution: 'MassGIS'
@@ -136,9 +243,122 @@ var massMapperWMS = L.tileLayer.wms("https://gis-prod.digital.mass.gov/geoserver
 var shadedReliefLayer = L.tileLayer('https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/LiDAR_ShadedRelief/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Shaded Relief &copy; <a href="https://www.arcgis.com/home/item.html?id=5fb17dfad618421f8d2513a805a2a7b5">ArcGIS</a>'
 });
+
+// Initialize the Leaflet map
+var map = L.map('map', {
+  center: [42.4189, -71.1422],  // Default location
+  zoom: 13,                     // Default zoom level
+  layers: [shadedReliefLayer]  // Layers that are visible on load
+});
 	
 // Add the default layer (OpenStreetMap) to the map
 osmLayer.addTo(map);
+
+fetch('https://rivertours.s3.us-east-2.amazonaws.com/Waterline.geojson')  // Replace with your actual S3 URL
+  .then(response => response.json())
+  .then(data => {
+    // Define the style function based on the numerical id
+    function style(feature) {
+      var fillColor;
+      switch (feature.properties.id) {  // Correct lowercase id, now compared as a number
+        case 1978:
+          fillColor = 'rgba(173, 216, 150, 0.5)';  // Light blue (50% transparent)
+          break;
+        case 1955:
+          fillColor = 'rgba(255, 160, 160, 0.5)';  // Medium blue (50% transparent)
+          break;
+        case 1939:
+          fillColor = 'rgba(70, 130, 180, 0.5)';   // Darker blue (50% transparent)
+          break;
+        default:
+          fillColor = 'rgba(173, 216, 230, 0.5)';  // Default color if id doesn't match
+      }
+
+      return {
+        color: "#808080",  // Dark gray outline
+        weight: 1,         // Thin outline
+        fillColor: fillColor,
+        fillOpacity: 0.5   // 50% transparency for the fill
+      };
+    }
+
+    // Create the GeoJSON layer with the style function
+    var geojsonLayer = L.geoJSON(data, {
+      style: style  // Apply the style function
+    });
+
+    // Define overlay layers after geojsonLayer is created
+    var overlayLayers = {
+      "Historic Channels": geojsonLayer,
+	  "Migratory Fish Habitat": smeltSpawningHabitat,
+	  "Dams": Dams
+    };
+
+    // Add base maps and overlay layers to the layer control
+    var layerControl = L.control.layers(baseMaps, overlayLayers).addTo(map);
+
+// Add a custom legend control
+var legend = L.control({ position: "topright" });
+
+legend.onAdd = function (map) {
+  var div = L.DomUtil.create("div", "legend");
+  div.innerHTML = "<h4>Legend</h4>";  // Initial legend title
+  return div;
+};
+
+// Function to update the legend based on the visible layer
+function updateLegend(layerName) {
+  // Make sure the legend div exists before trying to update it
+  var div = document.querySelector('.legend');
+  
+  if (!div) {
+    console.error("Legend div not found.");
+    return; // Exit if the legend div doesn't exist
+  }
+
+  // Clear the current legend content
+  div.innerHTML = "<h4>Legend</h4>";
+
+  // GeoJSON layer legend
+  if (layerName === 'Historic Channels') {
+    div.innerHTML += '<i style="background: rgba(173, 216, 230, 0.5); border: 1px solid #808080;"></i> 1978 (Green)<br>';
+    div.innerHTML += '<i style="background: rgba(100, 149, 237, 0.5); border: 1px solid #808080;"></i> 1955 (Red)<br>';
+    div.innerHTML += '<i style="background: rgba(70, 130, 180, 0.5); border: 1px solid #808080;"></i> 1939 (Blue)<br>';
+  }
+
+  // WMS layer: Migratory Habitat Legend
+  if (layerName === 'Migratory Fish Habitat') {
+    div.innerHTML += "<img src='https://gis-prod.digital.mass.gov/geoserver/wms?request=GetLegendGraphic&format=image/png&layer=massgis:GISDATA.DF_MIGRATORY_HABITAT_ARC' alt='Migratory Habitat Legend'>";
+  }
+  
+  // Dams layer legend
+  if (layerName === 'Dams') {
+    div.innerHTML += "<img src='https://gis-prod.digital.mass.gov/geoserver/wms?request=GetLegendGraphic&format=image/png&layer=massgis:GISDATA.DAMS_PT' alt='Dams Legend'>";
+  }
+}
+
+// Listen for when layers are added or removed and update the legend accordingly
+map.on('overlayadd', function(eventLayer) {
+  legend.addTo(map);  // Ensure the legend is added to the map
+  updateLegend(eventLayer.name);  // Update legend when a layer is added
+});
+
+map.on('overlayremove', function(eventLayer) {
+  // Remove legend if no relevant layers are active
+  map.removeControl(legend);
+});
+
+// Optionally add the GeoJSON layer to the map by default
+
+legend.addTo(map);  // Add the legend by default if the GeoJSON layer is visible initially
+})
+  .catch(error => console.error('Error loading GeoJSON:', error));
+
+
+
+
+
+
 
 
 // List of GPS coordinates for each scene (example with 4 scenes, add more as needed)
@@ -181,8 +401,9 @@ var baseMaps = {
 "Hillshade": shadedReliefLayer
 };
 
+
 // Add the layer control to the map (for toggling between layers)
-L.control.layers(baseMaps).addTo(map);
+L.control.layers(baseMaps, overlayLayers).addTo(map);
 
 // Function to switch scenes (assuming a function like this already exists)
 function switchScene(sceneId) {
