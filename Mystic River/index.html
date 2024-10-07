@@ -65,7 +65,7 @@
 
 <div id="welcomeBox">
   <h2>Welcome!</h2>
-  <p>Use your mouse to click and drag around the scene, and click the arrows or the scene list on the left to navigate upstream or downstream.</p>
+  <p>Use your mouse to click and drag around the scene, and click the arrows, the dots on the map, or the scene list on the left to navigate upstream or downstream.</p>
   <p>To toggle layers in the map, use the icon in the top right. If you'd like to see real-time water data for the Mystic River, use the link in the bottom right of the page.</p>
   <p>Be sure to click on the information icons for descriptions of important features.</p>
 </div>
@@ -364,35 +364,40 @@ legend.addTo(map);  // Add the legend by default if the GeoJSON layer is visible
 // List of GPS coordinates for each scene (example with 4 scenes, add more as needed)
 var markers = [
     
-    { lat: 42.41567, lon: -71.13886, title: '1 - Dugger Park', sceneId: '37-frames_0038' },
-    { lat: 42.41564, lon: -71.13877, title: '2', sceneId: '38-frames_0039' },
-    { lat: 42.41561, lon: -71.13869, title: '3', sceneId: '39-frames_0040' },
-    { lat: 42.41557, lon: -71.13857, title: '4', sceneId: '40-frames_0041' },
-    { lat: 42.41555, lon: -71.13851, title: '5', sceneId: '41-frames_0042' },
-    { lat: 42.41551, lon: -71.13838, title: '6 - Harvard Ave. Bridge', sceneId: '42-frames_0043' },
-    { lat: 42.41547, lon: -71.13825, title: '7', sceneId: '43-frames_0044' },
-    { lat: 42.41541, lon: -71.13806, title: '8', sceneId: '44-frames_0045' },
-    { lat: 42.41535, lon: -71.13790, title: '9', sceneId: '45-frames_0046' },
-    { lat: 42.41532, lon: -71.13776, title: '10', sceneId: '46-frames_0047' },
-    { lat: 42.41528, lon: -71.13756, title: '11', sceneId: '47-frames_0048' }
+    { lat: 42.41567, lon: -71.13886, title: '1 - Dugger Park', sceneId: '0-frames_0038' },
+    { lat: 42.41564, lon: -71.13877, title: '2', sceneId: '1-frames_0039' },
+    { lat: 42.41561, lon: -71.13869, title: '3', sceneId: '2-frames_0040' },
+    { lat: 42.41557, lon: -71.13857, title: '4', sceneId: '3-frames_0041' },
+    { lat: 42.41555, lon: -71.13851, title: '5', sceneId: '4-frames_0042' },
+    { lat: 42.41551, lon: -71.13838, title: '6 - Harvard Ave. Bridge', sceneId: '5-frames_0043' },
+    { lat: 42.41547, lon: -71.13825, title: '7', sceneId: '6-frames_0044' },
+    { lat: 42.41541, lon: -71.13806, title: '8', sceneId: '7-frames_0045' },
+    { lat: 42.41535, lon: -71.13790, title: '9', sceneId: '8-frames_0046' },
+    { lat: 42.41532, lon: -71.13776, title: '10', sceneId: '9-frames_0047' },
+    { lat: 42.41528, lon: -71.13756, title: '11', sceneId: '10-frames_0048' }
 	
 ];
 
-// Add markers for each scene
-// Add draggable markers for each scene
-markers.forEach(function(marker) {
-    var popupContent = "<b>" + marker.title + "</b><br><a href='#' onclick=\"switchScene('" + marker.sceneId + "')\">View Panorama</a>";
-    
-    // Create a draggable marker
-    var mapMarker = L.marker([marker.lat, marker.lon], {draggable: false}).addTo(map).bindPopup(popupContent);
-    
-    // Event listener to capture the new position after dragging
-    mapMarker.on('dragend', function(e) {
-        var newLatLng = e.target.getLatLng();
-        console.log("Updated coordinates for " + marker.title + ": ", newLatLng.lat, newLatLng.lng);
-        // Here you can update your marker's coordinates or log them as needed
-    });
-});
+// Marker style settings for small circle markers
+  var markerStyle = {
+      radius: 5,  // Small circle size
+      fillColor: "#3388ff",  // Customize circle fill color
+      color: "#3388ff",  // Customize circle border color
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8
+  };
+
+  // Add circle markers to the map
+  markers.forEach(function(marker) {
+      L.circleMarker([marker.lat, marker.lon], markerStyle)
+        .addTo(map)
+        .on('click', function() {
+            switchToSceneById(marker.sceneId);  // Switch directly to the scene on click
+        });
+  });
+
+
 
 // Define the base layers (to be toggled)
 var baseMaps = {
@@ -405,11 +410,12 @@ var baseMaps = {
 // Add the layer control to the map (for toggling between layers)
 L.control.layers(baseMaps, overlayLayers).addTo(map);
 
-// Function to switch scenes (assuming a function like this already exists)
+// Modify the switchScene function to use Marzipano's scene switching logic
 function switchScene(sceneId) {
-    var sceneElement = document.querySelector(`[data-id='${sceneId}']`);
-    if (sceneElement) {
-        sceneElement.click();  // Simulate click to switch scene
+    var scene = findSceneById(sceneId);  // Use Marzipano's findSceneById to get the scene object
+    if (scene) {
+        scene.scene.switchTo();  // Use Marzipano's scene switch method
+        console.log("Switched to scene: " + sceneId);
     } else {
         console.error('Scene not found: ' + sceneId);
     }

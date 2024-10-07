@@ -376,6 +376,21 @@
     }
     return null;
   }
+  
+  // Expose findSceneById globally
+window.findSceneById = findSceneById;
+  
+  function switchToSceneById(sceneId) {
+    var scene = findSceneById(sceneId);
+    if (scene) {
+        switchScene(scene);
+    } else {
+        console.error('Scene not found: ' + sceneId);
+    }
+}
+
+// Expose switchToSceneById globally
+window.switchToSceneById = switchToSceneById;
 
   function findSceneDataById(id) {
     for (var i = 0; i < data.scenes.length; i++) {
@@ -385,6 +400,23 @@
     }
     return null;
   }
+
+// Your existing switchScene function below this
+function switchScene(scene) {
+  console.log("Scene switched to: " + scene.data.id);  // Add this for debugging   
+   stopAutorotate();
+    scene.view.setParameters(scene.data.initialViewParameters);
+    scene.scene.switchTo();
+    startAutorotate();
+    updateSceneName(scene);
+    updateSceneList(scene);
+	 // Call toggleWelcomeBox when switching scenes
+    toggleWelcomeBox(scene.data.id);  // Pass the current scene's ID to the function
+
+}
+
+// Expose switchScene globally
+window.switchScene = switchScene;
 
   // Display the initial scene.
   switchScene(scenes[0]);
